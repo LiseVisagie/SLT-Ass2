@@ -458,7 +458,7 @@ The largest step size: 0.6520
     \end{Verbatim}
 
     The upper bound on the suboptimality gap,
-\(\mathcal{R}(\beta^{(i)})-\mathcal{R}(\beta^*)\), under the stopping
+\(\mathcal{R}(\beta^{(k)})-\mathcal{R}(\beta^*)\), under the stopping
 condition, \(||(\nabla_\beta\mathcal{R})(\beta)||_2\leq\epsilon\) is
 equal to
 \(\frac{\epsilon^2}{2\tau}=\frac{(10^{-6})^2}{2(\lambda\text{min}(\frac{1}{n}\mathbf{X'X})+\lambda)}\).
@@ -467,8 +467,9 @@ equal to
 \prompt{In}{incolor}{4}{\boxspacing}
 \begin{Verbatim}[commandchars=\\\{\}]
 \PY{n}{tau}\PY{o}{=}\PY{n+nb}{min}\PY{p}{(}\PY{n}{eigenvalues}\PY{p}{)}\PY{o}{+}\PY{n}{lambda\PYZus{}}
+\PY{n}{max\PYZus{}gap}\PY{o}{=}\PY{p}{(}\PY{n}{tol}\PY{o}{*}\PY{o}{*}\PY{l+m+mi}{2}\PY{p}{)}\PY{o}{/}\PY{p}{(}\PY{l+m+mi}{2}\PY{o}{*}\PY{n}{tau}\PY{p}{)}
 \PY{n+nb}{print}\PY{p}{(}\PY{l+s+sa}{f}\PY{l+s+s2}{\PYZdq{}}\PY{l+s+se}{\PYZbs{}u03c4}\PY{l+s+s2}{: }\PY{l+s+si}{\PYZob{}}\PY{n}{tau}\PY{l+s+si}{:}\PY{l+s+s2}{.4f}\PY{l+s+si}{\PYZcb{}}\PY{l+s+s2}{\PYZdq{}}\PY{p}{)}
-\PY{n+nb}{print}\PY{p}{(}\PY{l+s+s2}{\PYZdq{}}\PY{l+s+s2}{The upper bound on the suboptimality gap: }\PY{l+s+s2}{\PYZdq{}}\PY{p}{,}\PY{p}{(}\PY{n}{tol}\PY{o}{*}\PY{o}{*}\PY{l+m+mi}{2}\PY{p}{)}\PY{o}{/}\PY{p}{(}\PY{l+m+mi}{2}\PY{o}{*}\PY{n}{tau}\PY{p}{)}\PY{p}{)} 
+\PY{n+nb}{print}\PY{p}{(}\PY{l+s+s2}{\PYZdq{}}\PY{l+s+s2}{The upper bound on the suboptimality gap: }\PY{l+s+s2}{\PYZdq{}}\PY{p}{,}\PY{n}{max\PYZus{}gap}\PY{p}{)} 
 \end{Verbatim}
 \end{tcolorbox}
 
@@ -499,16 +500,26 @@ The upper bound on the suboptimality gap:  5.421044018712684e-13
 \end{tcolorbox}
 
     \begin{tcolorbox}[breakable, size=fbox, boxrule=1pt, pad at break*=1mm,colback=cellbackground, colframe=cellborder]
-\prompt{In}{incolor}{ }{\boxspacing}
+\prompt{In}{incolor}{6}{\boxspacing}
+\begin{Verbatim}[commandchars=\\\{\}]
+\PY{n+nb}{print}\PY{p}{(}\PY{n}{np}\PY{o}{.}\PY{n}{sqrt}\PY{p}{(}\PY{n}{beta\PYZus{}star}\PY{o}{.}\PY{n}{T}\PY{n+nd}{@beta\PYZus{}star}\PY{p}{)}\PY{p}{)}
+\end{Verbatim}
+\end{tcolorbox}
+
+    \begin{Verbatim}[commandchars=\\\{\}]
+5.612989248904206
+    \end{Verbatim}
+
+    \begin{tcolorbox}[breakable, size=fbox, boxrule=1pt, pad at break*=1mm,colback=cellbackground, colframe=cellborder]
+\prompt{In}{incolor}{7}{\boxspacing}
 \begin{Verbatim}[commandchars=\\\{\}]
 \PY{k}{def}\PY{+w}{ }\PY{n+nf}{gradient\PYZus{}decent}\PY{p}{(}\PY{n}{y}\PY{p}{,}\PY{n}{X}\PY{p}{,}\PY{n}{lambda\PYZus{}}\PY{p}{,}\PY{n}{beta\PYZus{}0}\PY{p}{,}\PY{n}{t}\PY{p}{,}\PY{n}{max\PYZus{}iter}\PY{p}{,}\PY{n}{tol}\PY{p}{)}\PY{p}{:}
-    \PY{n}{n}\PY{p}{,}\PY{n}{p}\PY{o}{=}\PY{n}{X}\PY{o}{.}\PY{n}{shape}
-    \PY{n}{Q}\PY{o}{=}\PY{p}{(}\PY{n}{X}\PY{o}{.}\PY{n}{T}\PY{n+nd}{@X}\PY{p}{)}\PY{o}{/}\PY{n}{n}\PY{o}{\PYZhy{}}\PY{p}{(}\PY{n}{X}\PY{o}{.}\PY{n}{T}\PY{n+nd}{@y}\PY{p}{)}\PY{o}{/}\PY{n}{n}
+    \PY{n}{n}\PY{o}{=}\PY{n}{X}\PY{o}{.}\PY{n}{shape}\PY{p}{[}\PY{l+m+mi}{0}\PY{p}{]}
     \PY{n}{beta\PYZus{}prev}\PY{o}{=}\PY{n}{beta\PYZus{}0}
-    \PY{n}{gradient}\PY{o}{=}\PY{n}{Q}\PY{o}{+}\PY{n}{lambda\PYZus{}}\PY{o}{*}\PY{n}{beta\PYZus{}prev}
+    \PY{n}{gradient}\PY{o}{=}\PY{o}{\PYZhy{}}\PY{p}{(}\PY{n}{X}\PY{o}{.}\PY{n}{T}\PY{n+nd}{@y}\PY{p}{)}\PY{o}{/}\PY{n}{n}
     \PY{k}{for} \PY{n}{k} \PY{o+ow}{in} \PY{n+nb}{range}\PY{p}{(}\PY{n}{max\PYZus{}iter}\PY{p}{)}\PY{p}{:}
         \PY{n}{beta\PYZus{}hat}\PY{o}{=}\PY{n}{beta\PYZus{}prev}\PY{o}{\PYZhy{}}\PY{n}{t}\PY{o}{*}\PY{n}{gradient}
-        \PY{n}{gradient}\PY{o}{=}\PY{n}{Q}\PY{o}{+}\PY{n}{lambda\PYZus{}}\PY{o}{*}\PY{n}{beta\PYZus{}hat}
+        \PY{n}{gradient}\PY{o}{=}\PY{p}{(}\PY{n}{X}\PY{o}{.}\PY{n}{T}\PY{n+nd}{@X}\PY{n+nd}{@beta\PYZus{}hat}\PY{p}{)}\PY{o}{/}\PY{n}{n}\PY{o}{\PYZhy{}}\PY{p}{(}\PY{n}{X}\PY{o}{.}\PY{n}{T}\PY{n+nd}{@y}\PY{p}{)}\PY{o}{/}\PY{n}{n}\PY{o}{+}\PY{n}{lambda\PYZus{}}\PY{o}{*}\PY{n}{beta\PYZus{}hat}
         \PY{n}{norm}\PY{o}{=}\PY{n}{np}\PY{o}{.}\PY{n}{linalg}\PY{o}{.}\PY{n}{norm}\PY{p}{(}\PY{n}{gradient}\PY{p}{)}
         \PY{k}{if} \PY{p}{(}\PY{n}{norm}\PY{o}{\PYZlt{}}\PY{o}{=}\PY{n}{tol}\PY{p}{)}\PY{p}{:}
             \PY{k}{return} \PY{p}{(}\PY{n}{beta\PYZus{}hat}\PY{p}{,}\PY{n}{k}\PY{p}{,}\PY{n}{norm}\PY{p}{)}
@@ -519,48 +530,84 @@ The upper bound on the suboptimality gap:  5.421044018712684e-13
 \end{tcolorbox}
 
     \begin{tcolorbox}[breakable, size=fbox, boxrule=1pt, pad at break*=1mm,colback=cellbackground, colframe=cellborder]
-\prompt{In}{incolor}{15}{\boxspacing}
+\prompt{In}{incolor}{8}{\boxspacing}
 \begin{Verbatim}[commandchars=\\\{\}]
 \PY{n}{coef}\PY{p}{,}\PY{n}{iterations}\PY{p}{,}\PY{n}{norm}\PY{o}{=}\PY{n}{gradient\PYZus{}decent}\PY{p}{(}\PY{n}{y\PYZus{}centered}\PY{p}{,}\PY{n}{X\PYZus{}scaled}\PY{p}{,}\PY{n}{lambda\PYZus{}}\PY{p}{,}\PY{n}{np}\PY{o}{.}\PY{n}{zeros}\PY{p}{(}\PY{n}{p}\PY{p}{)}\PY{p}{,}\PY{n}{t}\PY{p}{,}\PY{l+m+mi}{1000}\PY{p}{,}\PY{n}{tol}\PY{p}{)}
-\PY{c+c1}{\PYZsh{}df[\PYZdq{}beta\PYZus{}k\PYZdq{}]=coef}
+\PY{n}{df}\PY{p}{[}\PY{l+s+s2}{\PYZdq{}}\PY{l+s+s2}{Beta\PYZus{}k}\PY{l+s+s2}{\PYZdq{}}\PY{p}{]}\PY{o}{=}\PY{n}{coef}
+\end{Verbatim}
+\end{tcolorbox}
 
-\PY{n+nb}{print}\PY{p}{(}\PY{l+s+s2}{\PYZdq{}}\PY{l+s+s2}{Gradient descent results:}\PY{l+s+s2}{\PYZdq{}}\PY{p}{)}
-\PY{n+nb}{print}\PY{p}{(}\PY{l+s+s2}{\PYZdq{}}\PY{l+s+s2}{Number of iterations (k): }\PY{l+s+s2}{\PYZdq{}}\PY{p}{,}\PY{n}{iterations}\PY{p}{)}
-\PY{n+nb}{print}\PY{p}{(}\PY{l+s+s2}{\PYZdq{}}\PY{l+s+s2}{Final gradient norm: }\PY{l+s+s2}{\PYZdq{}}\PY{p}{,}\PY{n}{norm}\PY{p}{)}
+    \begin{tcolorbox}[breakable, size=fbox, boxrule=1pt, pad at break*=1mm,colback=cellbackground, colframe=cellborder]
+\prompt{In}{incolor}{9}{\boxspacing}
+\begin{Verbatim}[commandchars=\\\{\}]
+\PY{k}{def}\PY{+w}{ }\PY{n+nf}{R}\PY{p}{(}\PY{n}{beta}\PY{p}{,}\PY{n}{lambda\PYZus{}}\PY{p}{,}\PY{n}{y}\PY{o}{=}\PY{n}{y\PYZus{}centered}\PY{p}{,}\PY{n}{X}\PY{o}{=}\PY{n}{X\PYZus{}scaled}\PY{p}{)}\PY{p}{:}
+    \PY{n}{n}\PY{o}{=}\PY{n}{X}\PY{o}{.}\PY{n}{shape}\PY{p}{[}\PY{l+m+mi}{0}\PY{p}{]}
+    \PY{k}{return}\PY{p}{(}\PY{p}{(}\PY{p}{(}\PY{n}{y}\PY{o}{\PYZhy{}}\PY{n}{X}\PY{n+nd}{@beta}\PY{p}{)}\PY{o}{.}\PY{n}{T}\PY{o}{@}\PY{p}{(}\PY{n}{y}\PY{o}{\PYZhy{}}\PY{n}{X}\PY{n+nd}{@beta}\PY{p}{)}\PY{p}{)}\PY{o}{/}\PY{p}{(}\PY{l+m+mi}{2}\PY{o}{*}\PY{n}{n}\PY{p}{)}\PY{o}{+}\PY{p}{(}\PY{n}{lambda\PYZus{}}\PY{o}{/}\PY{l+m+mi}{2}\PY{p}{)}\PY{o}{*}\PY{p}{(}\PY{n}{beta}\PY{o}{.}\PY{n}{T}\PY{n+nd}{@beta}\PY{p}{)}\PY{p}{)}
+
+\PY{n}{gap}\PY{o}{=}\PY{n}{R}\PY{p}{(}\PY{n}{df}\PY{p}{[}\PY{l+s+s2}{\PYZdq{}}\PY{l+s+s2}{Beta\PYZus{}k}\PY{l+s+s2}{\PYZdq{}}\PY{p}{]}\PY{p}{,}\PY{n}{lambda\PYZus{}}\PY{p}{)}\PY{o}{\PYZhy{}}\PY{n}{R}\PY{p}{(}\PY{n}{df}\PY{p}{[}\PY{l+s+s2}{\PYZdq{}}\PY{l+s+s2}{Beta\PYZus{}star}\PY{l+s+s2}{\PYZdq{}}\PY{p}{]}\PY{p}{,}\PY{n}{lambda\PYZus{}}\PY{p}{)}
+\end{Verbatim}
+\end{tcolorbox}
+
+    \begin{tcolorbox}[breakable, size=fbox, boxrule=1pt, pad at break*=1mm,colback=cellbackground, colframe=cellborder]
+\prompt{In}{incolor}{13}{\boxspacing}
+\begin{Verbatim}[commandchars=\\\{\}]
+\PY{n}{num}\PY{o}{=}\PY{n}{np}\PY{o}{.}\PY{n}{log}\PY{p}{(}\PY{p}{(}\PY{l+m+mi}{2}\PY{o}{*}\PY{n}{mu}\PY{o}{*}\PY{p}{(}\PY{n}{R}\PY{p}{(}\PY{n}{np}\PY{o}{.}\PY{n}{zeros}\PY{p}{(}\PY{n}{p}\PY{p}{)}\PY{p}{,}\PY{n}{lambda\PYZus{}}\PY{p}{)}\PY{o}{\PYZhy{}}\PY{n}{R}\PY{p}{(}\PY{n}{df}\PY{p}{[}\PY{l+s+s2}{\PYZdq{}}\PY{l+s+s2}{Beta\PYZus{}star}\PY{l+s+s2}{\PYZdq{}}\PY{p}{]}\PY{p}{,}\PY{n}{lambda\PYZus{}}\PY{p}{)}\PY{p}{)}\PY{p}{)}\PY{o}{/}\PY{n}{tol}\PY{o}{*}\PY{o}{*}\PY{l+m+mi}{2}\PY{p}{)}
+\PY{n}{denom}\PY{o}{=}\PY{o}{\PYZhy{}}\PY{n}{np}\PY{o}{.}\PY{n}{log}\PY{p}{(}\PY{l+m+mi}{1}\PY{o}{\PYZhy{}}\PY{n}{tau}\PY{o}{/}\PY{n}{mu}\PY{p}{)}
+
+\PY{n}{suff\PYZus{}bound}\PY{o}{=}\PY{n}{num}\PY{o}{/}\PY{n}{denom}
+\end{Verbatim}
+\end{tcolorbox}
+
+    \begin{tcolorbox}[breakable, size=fbox, boxrule=1pt, pad at break*=1mm,colback=cellbackground, colframe=cellborder]
+\prompt{In}{incolor}{ }{\boxspacing}
+\begin{Verbatim}[commandchars=\\\{\}]
+\PY{k+kn}{import}\PY{+w}{ }\PY{n+nn}{math}
+
+\PY{n+nb}{print}\PY{p}{(}\PY{l+s+s2}{\PYZdq{}}\PY{l+s+s2}{====== Gradient descent results ======}\PY{l+s+s2}{\PYZdq{}}\PY{p}{)}
+\PY{n+nb}{print}\PY{p}{(}\PY{l+s+s2}{\PYZdq{}}\PY{l+s+s2}{ }\PY{l+s+s2}{\PYZdq{}}\PY{p}{)}
+\PY{n+nb}{print}\PY{p}{(}\PY{l+s+s2}{\PYZdq{}}\PY{l+s+s2}{Coefficients}\PY{l+s+s2}{\PYZdq{}}\PY{p}{)}
 \PY{n+nb}{print}\PY{p}{(}\PY{n}{df}\PY{p}{)}
+
+\PY{n+nb}{print}\PY{p}{(}\PY{l+s+s2}{\PYZdq{}}\PY{l+s+s2}{ }\PY{l+s+s2}{\PYZdq{}}\PY{p}{)}
+\PY{n+nb}{print}\PY{p}{(}\PY{l+s+sa}{f}\PY{l+s+s2}{\PYZdq{}}\PY{l+s+s2}{Final gradient norm: }\PY{l+s+si}{\PYZob{}}\PY{n}{norm}\PY{l+s+si}{:}\PY{l+s+s2}{.7f}\PY{l+s+si}{\PYZcb{}}\PY{l+s+s2}{\PYZdq{}}\PY{p}{)}
+\PY{n+nb}{print}\PY{p}{(}\PY{l+s+s2}{\PYZdq{}}\PY{l+s+s2}{Suboptimality gap: }\PY{l+s+s2}{\PYZdq{}}\PY{p}{,} \PY{n}{gap}\PY{p}{)}
+\PY{n+nb}{print}\PY{p}{(}\PY{l+s+s2}{\PYZdq{}}\PY{l+s+s2}{The upper bound on the suboptimality gap: }\PY{l+s+s2}{\PYZdq{}}\PY{p}{,}\PY{n}{max\PYZus{}gap}\PY{p}{)}
+
+\PY{n+nb}{print}\PY{p}{(}\PY{l+s+s2}{\PYZdq{}}\PY{l+s+s2}{ }\PY{l+s+s2}{\PYZdq{}}\PY{p}{)}
+\PY{n+nb}{print}\PY{p}{(}\PY{l+s+s2}{\PYZdq{}}\PY{l+s+s2}{Number of iterations (k): }\PY{l+s+s2}{\PYZdq{}}\PY{p}{,}\PY{n}{iterations}\PY{o}{+}\PY{l+m+mi}{1}\PY{p}{)}
+\PY{n+nb}{print}\PY{p}{(}\PY{l+s+s2}{\PYZdq{}}\PY{l+s+s2}{Upper bound of suffiecient number of iterations: }\PY{l+s+s2}{\PYZdq{}}\PY{p}{,}\PY{n}{math}\PY{o}{.}\PY{n}{ceil}\PY{p}{(}\PY{n}{suff\PYZus{}bound}\PY{p}{)}\PY{p}{)}
 \end{Verbatim}
 \end{tcolorbox}
 
     \begin{Verbatim}[commandchars=\\\{\}]
-[[-1.12725498  0.75220532 -0.74209877 -2.91300244  0.41359205  2.99568187
-  -0.47984871 -4.94667676]
- [-2.05608488  1.68103522 -0.93470231 -2.94122136  0.39546334  3.05730098
-  -0.3622196  -4.83089762]
- [-2.0000584   0.61562827  0.13070465 -3.01011695  0.34320788  3.00332692
-  -0.42384424 -4.82629764]
- [-2.03580192  0.74426937 -0.8749568  -2.00445551  0.38256435  3.00900253
-  -0.63120607 -4.88133754]
- [-2.15031748  0.639844   -0.96274203 -3.05854571  1.43665455  3.08055728
-  -0.53169466 -4.91041074]
- [-2.2367663   0.63314301 -0.97116162 -3.10064617  0.41201865  4.10519319
-  -0.55433382 -4.92245375]
- [-2.0745205   0.85139881 -0.7605564  -3.10307839  0.43754308  3.08344256
-   0.46741681 -4.86209937]
- [-2.21265589  0.71141345 -0.83431714 -3.0245172   0.38751966  3.04401529
-  -0.53340672 -3.86127585]]
-Gradient descent results:
-Number of iterations (k):  120
-Final gradient norm:  8.881974041510554e-07
-   True Beta  Beta\_star
-0        2.0   1.715485
-1       -1.5  -1.073638
-2        0.0   0.130419
-3        3.0   2.384244
-4        0.0  -0.123765
-5       -2.5  -2.051740
-6        1.0   0.670724
-7        5.0   4.127179
+====== Gradient descent results ======
+
+Coefficients
+   True Beta  Beta\_star    Beta\_k
+0        2.0   1.715485  1.715485
+1       -1.5  -1.073638 -1.073638
+2        0.0   0.130419  0.130419
+3        3.0   2.384244  2.384243
+4        0.0  -0.123765 -0.123765
+5       -2.5  -2.051740 -2.051740
+6        1.0   0.670724  0.670723
+7        5.0   4.127179  4.127179
+
+Final gradient norm: 0.0000006
+Suboptimality gap:  1.7674750552032492e-13
+The upper bound on the suboptimality gap:  5.421044018712684e-13
+
+Number of iterations (k):  17
+Upper bound of suffiuecient number of iterations:  35
     \end{Verbatim}
+
+    Gradient descent was able to converge to the exact minimum in 17
+iterations. Notably, both the number of iterations (17) and the
+suboptimatilty gap,
+\(\mathcal{R}(\beta^{(k)})-\mathcal{R}(\beta^*)=1.7674750552032492e-13\)
+were less than their theorical upper bounds of 35 iterations and
+\(\frac{\epsilon^2}{2\tau}=5.421044018712684e-13\), respectively,
+therefore confirming the theoretical results.
 
 
     % Add a bibliography block to the postdoc
